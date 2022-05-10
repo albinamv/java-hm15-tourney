@@ -3,9 +3,8 @@ package ru.netology.gameplay;
 import lombok.*;
 import ru.netology.domain.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,12 +14,12 @@ public class Game {
     private HashMap<String, Player> players = new HashMap<>();
 
     public void register(Player player) {
-        if (getById(player.getId()) != null) {
-            throw new AlreadyExistsException("Игрок с id " + player.getId() + " уже зарегистрирован");
-        }
-
         if (players.containsKey(player.getName())) {
             throw new AlreadyExistsException("Игрок с именем " + player.getName() + " уже зарегистрирован");
+        }
+
+        if (containsId(player.getId())) {
+            throw new AlreadyExistsException("Игрок с id " + player.getId() + " уже зарегистрирован");
         }
 
         players.put(player.getName(), player);
@@ -49,7 +48,16 @@ public class Game {
 
     }
 
-    // убран, т.к. есть замена в методах для HashMap
+    public boolean containsId(int id) {
+        for (Map.Entry<String, Player> entry : players.entrySet()) {
+            if (entry.getValue().getId() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // заменен на методы HashMap: containsKey() и get()
 //    public Player getByName(String name) {
 //        for (Player player : players) {
 //            if (player.getName() == name) {
@@ -58,13 +66,4 @@ public class Game {
 //        }
 //        return null;
 //    }
-
-    public Player getById(int id) {
-        for (Player player : players) {
-            if (player.getId() == id) {
-                return player;
-            }
-        }
-        return null;
-    }
 }
