@@ -35,7 +35,7 @@ class GameTest {
 
     @Test
     public void shouldNotAddExistingId() {
-       assertThrows(AlreadyExistsException.class, () -> {
+        assertThrows(AlreadyExistsException.class, () -> {
             game.register(thirdSameId);
         });
     }
