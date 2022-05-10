@@ -3,32 +3,32 @@ package ru.netology.gameplay;
 import lombok.*;
 import ru.netology.domain.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class Game {
-    private List<Player> players = new ArrayList<>();
+    private HashMap<String, Player> players = new HashMap<>();
 
     public void register(Player player) {
-        if (getById(player.getId()) != null) {
-            throw new AlreadyExistsException("Игрок с id " + player.getId() + " уже зарегистрирован");
-        }
-
-        if (getByName(player.getName()) != null) {
+        if (players.containsKey(player.getName())) {
             throw new AlreadyExistsException("Игрок с именем " + player.getName() + " уже зарегистрирован");
         }
 
-        players.add(player);
+        if (containsId(player.getId())) {
+            throw new AlreadyExistsException("Игрок с id " + player.getId() + " уже зарегистрирован");
+        }
+
+        players.put(player.getName(), player);
     }
 
     public int round(String playerName1, String playerName2) {
         if (!playerName1.equals(playerName2)) {
-            Player first = getByName(playerName1);
-            Player second = getByName(playerName2);
+            Player first = players.get(playerName1);
+            Player second = players.get(playerName2);
             if (first == null || second == null) {
                 throw new NotRegisteredException("К участию в турнире допускаются только зарегистрированные игроки");
             }
@@ -48,21 +48,22 @@ public class Game {
 
     }
 
-    public Player getByName(String name) {
-        for (Player player : players) {
-            if (player.getName() == name) {
-                return player;
+    public boolean containsId(int id) {
+        for (Map.Entry<String, Player> entry : players.entrySet()) {
+            if (entry.getValue().getId() == id) {
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
-    public Player getById(int id) {
-        for (Player player : players) {
-            if (player.getId() == id) {
-                return player;
-            }
-        }
-        return null;
-    }
+    // заменен на методы HashMap: containsKey() и get()
+//    public Player getByName(String name) {
+//        for (Player player : players) {
+//            if (player.getName() == name) {
+//                return player;
+//            }
+//        }
+//        return null;
+//    }
 }
