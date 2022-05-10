@@ -4,6 +4,7 @@ import lombok.*;
 import ru.netology.domain.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @AllArgsConstructor
@@ -11,24 +12,24 @@ import java.util.List;
 @Getter
 @Setter
 public class Game {
-    private List<Player> players = new ArrayList<>();
+    private HashMap<String, Player> players = new HashMap<>();
 
     public void register(Player player) {
         if (getById(player.getId()) != null) {
             throw new AlreadyExistsException("Игрок с id " + player.getId() + " уже зарегистрирован");
         }
 
-        if (getByName(player.getName()) != null) {
+        if (players.containsKey(player.getName())) {
             throw new AlreadyExistsException("Игрок с именем " + player.getName() + " уже зарегистрирован");
         }
 
-        players.add(player);
+        players.put(player.getName(), player);
     }
 
     public int round(String playerName1, String playerName2) {
         if (!playerName1.equals(playerName2)) {
-            Player first = getByName(playerName1);
-            Player second = getByName(playerName2);
+            Player first = players.get(playerName1);
+            Player second = players.get(playerName2);
             if (first == null || second == null) {
                 throw new NotRegisteredException("К участию в турнире допускаются только зарегистрированные игроки");
             }
@@ -48,14 +49,15 @@ public class Game {
 
     }
 
-    public Player getByName(String name) {
-        for (Player player : players) {
-            if (player.getName() == name) {
-                return player;
-            }
-        }
-        return null;
-    }
+    // убран, т.к. есть замена в методах для HashMap
+//    public Player getByName(String name) {
+//        for (Player player : players) {
+//            if (player.getName() == name) {
+//                return player;
+//            }
+//        }
+//        return null;
+//    }
 
     public Player getById(int id) {
         for (Player player : players) {
